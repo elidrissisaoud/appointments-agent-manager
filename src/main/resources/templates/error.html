@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>error</title>
+    <style>
+        body { font-family:'Segoe UI',sans-serif; background:linear-gradient(135deg,#eb5757,#f2994a); min-height:100vh; display:flex; align-items:center; justify-content:center; margin:0; }
+        .box { background:#fff; padding:50px; border-radius:16px; text-align:center; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+        .icon { width:70px; height:70px; background:#eb5757; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:32px; margin:0 auto 20px; }
+        h1 { color:#333; margin-bottom:10px; font-size:22px; }
+        p { color:#888; line-height:1.6; }
+        a { display:inline-block; margin-top:20px; color:#764ba2; font-weight:600; text-decoration:none; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <div class="icon">✕</div>
+    <h1>ERROR</h1>
+    <p>An error occurred.</p>
+    <a th:href="@{/rdv/patient}">← Start Again</a>
+</div>
+</body>
+</html>

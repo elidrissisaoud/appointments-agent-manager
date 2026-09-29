@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rendez-vous confirmé</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .box {
+            background: #fff;
+            padding: 50px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: pop 0.5s ease;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .check {
+            width: 70px; height: 70px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 36px;
+            margin: 0 auto 20px;
+        }
+        h1 { color: #333; margin-bottom: 10px; }
+        p { color: #888; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <div class="check">✓</div>
+    <h1 th:text="${success}">Appointment Confirmed</h1>
+    <p>You will receive a confirmation email shortly. Please also check your spam folder.</p>
+</div>
+</body>
+</html>

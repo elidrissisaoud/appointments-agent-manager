@@ -1,0 +1,1 @@
+ALTER TABLE patient ADD COLUMN patient_code VARCHAR(36) UNIQUE;

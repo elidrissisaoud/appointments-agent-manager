@@ -1,0 +1,2 @@
+ALTER TABLE patient ADD COLUMN email_verifie BOOLEAN DEFAULT FALSE;
+ALTER TABLE patient ADD COLUMN token_verification VARCHAR(255);

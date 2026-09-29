@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Prendre un rendez-vous</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            padding: 40px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .step-dot {
+            width: 32px;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+        }
+
+        .step-dot.active {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .verified-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #eafaf0;
+            color: #2e7d32;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .verified-badge .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fff;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118,75,162,0.15);
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+
+        input.is-invalid, textarea.is-invalid, select.is-invalid { border-color: #e53935; }
+
+        input:disabled, textarea:disabled, select:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+            color: #aaa;
+        }
+
+        .slot-info {
+            font-size: 12px;
+            color: #888;
+            margin-top: 6px;
+            min-height: 16px;
+        }
+
+        .slot-info.error { color: #e53935; }
+        .slot-info.loading { color: #764ba2; }
+
+        .row-2 {
+            display: flex;
+            gap: 14px;
+        }
+
+        .row-2 .field { flex: 1; }
+
+        .error-msg {
+            color: #e53935;
+            font-size: 12px;
+            margin-top: 5px;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        .global-error {
+            background: #fdecea;
+            color: #e53935;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .info-fermeture {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            margin-top: -20px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(118,75,162,0.35);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button:hover { box-shadow: 0 8px 20px rgba(118,75,162,0.45); }
+        button:active { transform: scale(0.97); }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            display: none;
+            animation: spin 0.7s linear infinite;
+        }
+
+        button.loading .spinner { display: inline-block; }
+        button.loading .btn-text { font-size: 0; }
+        button.loading .btn-text::after {
+            content: "Confirmation en cours...";
+            font-size: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Book an Appointment</h1>
+    <p class="subtitle">Step 2: Date and Reason</p>
+
+    <div class="steps">
+        <div class="step-dot active"></div>
+        <div class="step-dot active"></div>
+    </div>
+
+    <div class="verified-badge">
+        <span class="dot"></span>
+        Email successfully verified
+    </div>
+
+    <div class="global-error" th:if="${error}" th:text="${error}"></div>
+
+    <form id="detailsForm" th:action="@{/rdv/details}" th:object="${detailsRequest}" method="post" novalidate>
+
+        <div class="row-2">
+            <div class="field">
+                <label>Preferred Date</label>
+                <input type="date" id="dateInput" th:field="*{date.date}"
+                       th:classappend="${#fields.hasErrors('date.date')} ? 'is-invalid'">
+                <div class="error-msg" th:if="${#fields.hasErrors('date.date')}" th:errors="*{date.date}"></div>
+            </div>
+
+            <div class="field">
+                <label>Preferred Time</label>
+                <select id="heureSelect" th:field="*{date.time}"
+                        th:classappend="${#fields.hasErrors('date.time')} ? 'is-invalid'">
+                    <option value="">-- Choose a date first --</option>
+                </select>
+                <div class="error-msg" th:if="${#fields.hasErrors('date.time')}" th:errors="*{date.time}"></div>
+                <div class="slot-info" id="slotInfo"></div>
+            </div>
+        </div>
+
+        <p class="info-fermeture" id="infoFermeture"></p>
+
+        <div class="field">
+            <label>Appointment Reason</label>
+            <input type="text" th:field="*{rendezVous.raison}"
+                   th:classappend="${#fields.hasErrors('rendezVous.raison')} ? 'is-invalid'"
+                   placeholder="E.g.: Consultation, dental cleaning...">
+            <div class="error-msg" th:if="${#fields.hasErrors('rendezVous.raison')}" th:errors="*{rendezVous.raison}"></div>
+        </div>
+
+        <div class="field">
+            <label>Description (optional)</label>
+            <textarea th:field="*{rendezVous.description}"
+                      th:classappend="${#fields.hasErrors('rendezVous.description')} ? 'is-invalid'"
+                      placeholder="Additional details..."></textarea>
+            <div class="error-msg" th:if="${#fields.hasErrors('rendezVous.description')}" th:errors="*{rendezVous.description}"></div>
+        </div>
+
+        <button type="submit" id="submitBtn">
+            <span class="spinner"></span>
+            <span class="btn-text">Confirm Appointment ✓</span>
+        </button>
+    </form>
+</div>
+
+<script th:inline="javascript">
+    // Injected from application.properties via RdvService.getJoursFermes()
+    // Example of received value: ["SATURDAY", "SUNDAY"]
+    const joursFermes = /*[[${joursFermes}]]*/ [];
+
+    const NOMS_JOURS_EN = {
+        SUNDAY: "Sunday",
+        MONDAY: "Monday",
+        TUESDAY: "Tuesday",
+        WEDNESDAY: "Wednesday",
+        THURSDAY: "Thursday",
+        FRIDAY: "Friday",
+        SATURDAY: "Saturday"
+    };
+
+    const JOURS_JS = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+
+    const dateInput = document.getElementById('dateInput');
+    const heureSelect = document.getElementById('heureSelect');
+    const slotInfo = document.getElementById('slotInfo');
+    const infoFermeture = document.getElementById('infoFermeture');
+    const detailsForm = document.getElementById('detailsForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const aujourdHui = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', aujourdHui);
+
+    if (joursFermes.length > 0) {
+        const nomsEn = joursFermes.map(j => NOMS_JOURS_EN[j]).join(', ');
+        infoFermeture.textContent = `The clinic is closed on ${nomsEn}.`;
+    }
+
+    function jourFerme(dateStr) {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        const dateObj = new Date(y, m - 1, d); // Prevent timezone-related date shifts
+        const nomJour = JOURS_JS[dateObj.getDay()];
+        return joursFermes.includes(nomJour);
+    }
+
+    dateInput.addEventListener('change', async () => {
+        const dateChoisie = dateInput.value;
+
+        heureSelect.innerHTML = '<option value="">Loading...</option>';
+        heureSelect.disabled = true;
+        slotInfo.textContent = 'Searching for available time slots...';
+        slotInfo.className = 'slot-info loading';
+
+        if (!dateChoisie) {
+            heureSelect.innerHTML = '<option value="">-- Choose a date first --</option>';
+            slotInfo.textContent = '';
+            slotInfo.className = 'slot-info';
+            return;
+        }
+
+        // Client-side verification: clinic closing day
+        if (jourFerme(dateChoisie)) {
+            const [y, m, d] = dateChoisie.split('-').map(Number);
+            const nomJour = JOURS_JS[new Date(y, m - 1, d).getDay()];
+            heureSelect.innerHTML = '<option value="">-- Clinic Closed --</option>';
+            slotInfo.textContent = `The clinic is closed on ${NOMS_JOURS_EN[nomJour]}. Please choose another day.`;
+            slotInfo.className = 'slot-info error';
+            return; // Avoid unnecessary network request
+        }
+
+        try {
+            const response = await fetch(`/rdv/creneaux-disponibles?date=${dateChoisie}`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                heureSelect.innerHTML = '<option value="">-- No Time Slot --</option>';
+                slotInfo.textContent = data.error || 'An error occurred while loading the available time slots.';
+                slotInfo.className = 'slot-info error';
+                return;
+            }
+
+            const creneaux = Array.isArray(data) ? data : data.creneaux;
+
+            if (!creneaux || creneaux.length === 0) {
+                heureSelect.innerHTML = '<option value="">-- No Available Time Slot --</option>';
+                slotInfo.textContent = data.message || 'No available time slots on this day. Please choose another date.';
+                slotInfo.className = 'slot-info error';
+                return;
+            }
+
+            heureSelect.innerHTML = '<option value="">-- Choose a Time --</option>';
+            creneaux.forEach(creneau => {
+                const heureDebut = creneau.debut.substring(0, 5);
+                const option = document.createElement('option');
+                option.value = heureDebut;
+                option.textContent = heureDebut;
+                heureSelect.appendChild(option);
+            });
+
+            heureSelect.disabled = false;
+            slotInfo.textContent = `${creneaux.length} available time slot(s)`;
+            slotInfo.className = 'slot-info';
+
+        } catch (err) {
+            heureSelect.innerHTML = '<option value="">-- Error --</option>';
+            slotInfo.textContent = 'Unable to contact the server. Please check your connection.';
+            slotInfo.className = 'slot-info error';
+        }
+    });
+
+    detailsForm.addEventListener('submit', function (event) {
+        if (dateInput.value && jourFerme(dateInput.value)) {
+            event.preventDefault();
+            return;
+        }
+        if (submitBtn.classList.contains('loading')) {
+            return;
+        }
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (dateInput.value) {
+            dateInput.dispatchEvent(new Event('change'));
+        }
+    });
+</script>
+
+</body>
+</html>

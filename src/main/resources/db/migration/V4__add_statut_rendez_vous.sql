@@ -1,0 +1,3 @@
+ALTER TABLE rendez_vous
+    ADD COLUMN statut VARCHAR(20) NOT NULL DEFAULT 'EN_COURS'
+    CHECK (statut IN ('EN_COURS', 'PASSE', 'ANNULER'));

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { margin:0; padding:0; background:#f4f4f7; font-family:'Segoe UI',Roboto,sans-serif; }
+        .container { max-width:520px; margin:40px auto; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08); }
+        .header { background:linear-gradient(135deg,#667eea,#764ba2); padding:35px 30px; text-align:center; }
+        .header h1 { color:#fff; margin:0; font-size:22px; }
+        .body { padding:35px 30px; color:#333; }
+        .body p { line-height:1.6; font-size:15px; }
+        .btn { display:inline-block; margin-top:20px; padding:14px 32px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff !important; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px; }
+        .footer { padding:20px 30px; text-align:center; color:#aaa; font-size:12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🦷 Dental Clinic</h1>
+    </div>
+    <div class="body">
+        <p>Hello <strong th:text="${nomPatient}">Patient</strong>,</p>
+        <p>Thank you for starting your appointment request. To continue and choose your time slot, please confirm your email address by clicking the button below:</p>
+        <div style="text-align:center;">
+            <a class="btn" th:href="${lienConfirmation}">Confirm My Email</a>
+        </div>
+        <p style="margin-top:25px; font-size:13px; color:#888;">If you did not initiate this request, you can safely ignore this email.</p>
+    </div>
+    <div class="footer">
+        Dental Clinic — Please do not reply to this email
+    </div>
+</div>
+</body>
+</html>
