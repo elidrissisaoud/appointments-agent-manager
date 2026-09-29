@@ -122,7 +122,7 @@ Message shown on the first visit, inviting the patient to check their inbox to v
 
 **Cancellation email** — sent when the cabinet manager cancels an appointment, including the reason for the cancellation.
 
-![Appointment cancellation email](images/emailconceled.jpg)
+![Appointment cancellation email](images/emailcanceld.jpg)
 
 ---
 
@@ -150,6 +150,3 @@ The cabinet manager talks to the agent in natural language to manage the entire 
 - Access to the Telegram agent strictly filtered by conversation ID (`chat_id`), restricted to the cabinet manager
 - Sensitive configuration files (Google credentials, tokens, passwords) excluded from the repository via `.gitignore`
 
----
-
-> 📁 The images referenced in this document (`architecture.png`, `1.jpg`, `2.jpg`, `3.jpg`, `4.jpg`, `email.jpg`, `emailvalidation.jpg`, `emailconceled.jpg`, `googlecalender.jpg`, `telegram.jpg`) must be placed in an `images/` folder at the root of the repository for them to display correctly.
